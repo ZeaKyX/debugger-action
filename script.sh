@@ -37,6 +37,16 @@ while [ $DISPLAY -le 3 ]; do
     sleep 30
 done
 
+if [[ ! -z "$SCKEY" ]]; then
+    SCKEY="$SCKEY"
+    send_title="云编译准备"
+    SSH_LINE="$(tmate -S /tmp/tmate.sock display -p '#{tmate_ssh}')"
+    WEB_LINE="$(tmate -S /tmp/tmate.sock display -p '#{tmate_web}')"
+    markdown_splitline="%0D%0A%0D%0A---%0D%0A%0D%0A";markdown_linefeed="%0D%0A%0D%0A"
+    send_content="${markdown_splitline}${markdown_linefeed}${SSH_LINE}${markdown_splitline}${markdown_linefeed}${WEB_LINE}${markdown_splitline}${markdown_linefeed}请在30分钟内完成。"
+    curl -s "http://sc.ftqq.com/${SCKEY}.send?text=${send_title}" -d "&desp=${markdown_linefeed}${send_content}"
+fi
+
 if [[ ! -z "$SLACK_WEBHOOK_URL" ]]; then
     MSG=$(tmate -S /tmp/tmate.sock display -p '#{tmate_ssh}')
     curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"\`$MSG\`\"}" $SLACK_WEBHOOK_URL
