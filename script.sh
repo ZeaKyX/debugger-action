@@ -42,9 +42,10 @@ if [[ ! -z "$SCKEY" ]]; then
     send_title="云编译准备"
     SSH_LINE="$(tmate -S /tmp/tmate.sock display -p '#{tmate_ssh}')"
     WEB_LINE="$(tmate -S /tmp/tmate.sock display -p '#{tmate_web}')"
+    send_end="请在30分钟内完成，若需要取消限时可运行touch /tmp/keepalive。"
     markdown_splitline="%0D%0A%0D%0A---%0D%0A%0D%0A";markdown_linefeed="%0D%0A%0D%0A"
-    send_content="${markdown_splitline}${markdown_linefeed}${SSH_LINE}${markdown_splitline}${markdown_linefeed}${WEB_LINE}${markdown_splitline}${markdown_linefeed}请在30分钟内完成。"
-    curl -s "http://sc.ftqq.com/${SCKEY}.send?text=${send_title}" -d "&desp=${markdown_linefeed}${send_content}"
+    send_content="${markdown_splitline}${markdown_linefeed}${SSH_LINE}${markdown_splitline}${markdown_linefeed}${WEB_LINE}${markdown_splitline}${markdown_linefeed}"
+    curl -s "http://sc.ftqq.com/${SCKEY}.send?text=${send_title}" -d "&desp=${markdown_linefeed}${send_content}${send_end}"
 fi
 
 if [[ ! -z "$SLACK_WEBHOOK_URL" ]]; then
@@ -61,7 +62,9 @@ while [ -S /tmp/tmate.sock ]; do
     if [ ! -f /tmp/keepalive ]; then
         if ((timeout < 0)); then
             echo Waiting on tmate connection timed out!
-            sudo init 0
+            tmate kill-server
+            killall tmate
+            exit 0
         fi
     fi
 done
