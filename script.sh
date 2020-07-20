@@ -47,8 +47,11 @@ if [[ ! -z "$SCKEY" ]]; then
 fi
 
 if [[ ! -z "$SLACK_WEBHOOK_URL" ]]; then
-    MSG=$(tmate -S /tmp/tmate.sock display -p '#{tmate_ssh}')
-    curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"\`$MSG\`\"}" $SLACK_WEBHOOK_URL
+    MSG="SSH: ${SSH_LINE}\nWEB: ${WEB_LINE}"
+    TIMEOUT_MESSAGE="请在30分钟内完成，若需要取消限时可运行touch /tmp/keepalive。"
+    echo -n "Sending information to Slack......"
+    curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"\`\`\`\n$MSG\n\`\`\`\n${TIMEOUT_MESSAGE}\"}" "$SLACK_WEBHOOK_URL"
+    echo ""
 fi
 
 # Wait for connection to close or timeout in 15 min
