@@ -26,25 +26,25 @@ tmate -S /tmp/tmate.sock new-session -d
 tmate -S /tmp/tmate.sock wait tmate-ready
 
 # Print connection info
-DISPLAY=1
-while [ $DISPLAY -le 3 ]; do
-    echo ________________________________________________________________________________
-    echo To connect to this session copy-n-paste the following into a terminal or browser:
-    [ ! -f /tmp/keepalive ] && echo -e "After connecting you can run 'touch /tmp/keepalive' to disable the 30m timeout"
-    DISPLAY=$(($DISPLAY + 1))
-    sleep 30
-done
+#DISPLAY=1
+#while [ $DISPLAY -le 3 ]; do
+#    echo ________________________________________________________________________________
+#    echo To connect to this session copy-n-paste the following into a terminal or browser:
+#    [ ! -f /tmp/keepalive ] && echo -e "After connecting you can run 'touch /tmp/keepalive' to disable the 30m timeout"
+#    DISPLAY=$(($DISPLAY + 1))
+#    sleep 30
+#done
 
-if [[ ! -z "$SCKEY" ]]; then
-    SCKEY="$SCKEY"
-    send_title="云编译准备"
-    SSH_LINE="$(tmate -S /tmp/tmate.sock display -p '#{tmate_ssh}')"
-    WEB_LINE="$(tmate -S /tmp/tmate.sock display -p '#{tmate_web}')"
-    send_end="请在30分钟内完成，若需要取消限时可运行touch /tmp/keepalive。"
-    markdown_splitline="%0D%0A%0D%0A---%0D%0A%0D%0A";markdown_linefeed="%0D%0A%0D%0A"
-    send_content="${markdown_splitline}${markdown_linefeed}${SSH_LINE}${markdown_splitline}${markdown_linefeed}${WEB_LINE}${markdown_splitline}${markdown_linefeed}"
-    curl -s "http://sc.ftqq.com/${SCKEY}.send?text=${send_title}" -d "&desp=${markdown_linefeed}${send_content}${send_end}"
-fi
+#if [[ ! -z "$SCKEY" ]]; then
+#    SCKEY="$SCKEY"
+#    send_title="云编译准备"
+#    SSH_LINE="$(tmate -S /tmp/tmate.sock display -p '#{tmate_ssh}')"
+#    WEB_LINE="$(tmate -S /tmp/tmate.sock display -p '#{tmate_web}')"
+#    send_end="请在30分钟内完成，若需要取消限时可运行touch /tmp/keepalive。"
+#    markdown_splitline="%0D%0A%0D%0A---%0D%0A%0D%0A";markdown_linefeed="%0D%0A%0D%0A"
+#    send_content="${markdown_splitline}${markdown_linefeed}${SSH_LINE}${markdown_splitline}${markdown_linefeed}${WEB_LINE}${markdown_splitline}${markdown_linefeed}"
+#    curl -s "http://sc.ftqq.com/${SCKEY}.send?text=${send_title}" -d "&desp=${markdown_linefeed}${send_content}${send_end}"
+#fi
 
 if [[ ! -z "$SLACK_WEBHOOK_URL" ]]; then
     MSG="SSH: ${SSH_LINE}\nWEB: ${WEB_LINE}"
